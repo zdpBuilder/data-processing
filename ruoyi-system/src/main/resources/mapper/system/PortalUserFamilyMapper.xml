@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PortalUserFamilyMapper">
+    
+    <resultMap type="PortalUserFamily" id="PortalUserFamilyResult">
+        <result property="familyId"    column="family_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="fRelationship"    column="f_relationship"    />
+        <result property="fName"    column="f_name"    />
+        <result property="fPhone"    column="f_phone"    />
+        <result property="fWorkUnit"    column="f_work_unit"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPortalUserFamilyVo">
+        select family_id, user_id, f_relationship, f_name, f_phone, f_work_unit, create_by, create_time, update_by, update_time from portal_user_family
+    </sql>
+
+    <select id="selectPortalUserFamilyList" parameterType="PortalUserFamily" resultMap="PortalUserFamilyResult">
+        <include refid="selectPortalUserFamilyVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="fRelationship != null  and fRelationship != ''"> and f_relationship = #{fRelationship}</if>
+            <if test="fName != null  and fName != ''"> and f_name like concat('%', #{fName}, '%')</if>
+            <if test="fPhone != null  and fPhone != ''"> and f_phone = #{fPhone}</if>
+            <if test="fWorkUnit != null  and fWorkUnit != ''"> and f_work_unit = #{fWorkUnit}</if>
+        </where>
+    </select>
+    
+    <select id="selectPortalUserFamilyById" parameterType="Long" resultMap="PortalUserFamilyResult">
+        <include refid="selectPortalUserFamilyVo"/>
+        where family_id = #{familyId}
+    </select>
+        
+    <insert id="insertPortalUserFamily" parameterType="PortalUserFamily" useGeneratedKeys="true" keyProperty="familyId">
+        insert into portal_user_family
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="fRelationship != null">f_relationship,</if>
+            <if test="fName != null">f_name,</if>
+            <if test="fPhone != null">f_phone,</if>
+            <if test="fWorkUnit != null">f_work_unit,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="fRelationship != null">#{fRelationship},</if>
+            <if test="fName != null">#{fName},</if>
+            <if test="fPhone != null">#{fPhone},</if>
+            <if test="fWorkUnit != null">#{fWorkUnit},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePortalUserFamily" parameterType="PortalUserFamily">
+        update portal_user_family
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="fRelationship != null">f_relationship = #{fRelationship},</if>
+            <if test="fName != null">f_name = #{fName},</if>
+            <if test="fPhone != null">f_phone = #{fPhone},</if>
+            <if test="fWorkUnit != null">f_work_unit = #{fWorkUnit},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where family_id = #{familyId}
+    </update>
+
+    <delete id="deletePortalUserFamilyById" parameterType="Long">
+        delete from portal_user_family where family_id = #{familyId}
+    </delete>
+
+    <delete id="deletePortalUserFamilyByIds" parameterType="String">
+        delete from portal_user_family where family_id in 
+        <foreach item="familyId" collection="array" open="(" separator="," close=")">
+            #{familyId}
+        </foreach>
+    </delete>
+
+</mapper>

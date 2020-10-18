@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PortalUserEdueMapper">
+    
+    <resultMap type="PortalUserEdue" id="PortalUserEdueResult">
+        <result property="edueId"    column="edue_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="eStartTime"    column="e_start_time"    />
+        <result property="eEndTime"    column="e_end_time"    />
+        <result property="eSchool"    column="e_school"    />
+        <result property="ePost"    column="e_post"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPortalUserEdueVo">
+        select edue_id, user_id, e_start_time, e_end_time, e_school, e_post, create_by, create_time, update_by, update_time from portal_user_edue
+    </sql>
+
+    <select id="selectPortalUserEdueList" parameterType="PortalUserEdue" resultMap="PortalUserEdueResult">
+        <include refid="selectPortalUserEdueVo"/>
+        <where>  
+            <if test="eStartTime != null "> and e_start_time = #{eStartTime}</if>
+            <if test="eEndTime != null "> and e_end_time = #{eEndTime}</if>
+            <if test="eSchool != null  and eSchool != ''"> and e_school = #{eSchool}</if>
+            <if test="ePost != null  and ePost != ''"> and e_post = #{ePost}</if>
+        </where>
+    </select>
+    
+    <select id="selectPortalUserEdueById" parameterType="Long" resultMap="PortalUserEdueResult">
+        <include refid="selectPortalUserEdueVo"/>
+        where edue_id = #{edueId}
+    </select>
+        
+    <insert id="insertPortalUserEdue" parameterType="PortalUserEdue" useGeneratedKeys="true" keyProperty="edueId">
+        insert into portal_user_edue
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="eStartTime != null">e_start_time,</if>
+            <if test="eEndTime != null">e_end_time,</if>
+            <if test="eSchool != null">e_school,</if>
+            <if test="ePost != null">e_post,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="eStartTime != null">#{eStartTime},</if>
+            <if test="eEndTime != null">#{eEndTime},</if>
+            <if test="eSchool != null">#{eSchool},</if>
+            <if test="ePost != null">#{ePost},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePortalUserEdue" parameterType="PortalUserEdue">
+        update portal_user_edue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="eStartTime != null">e_start_time = #{eStartTime},</if>
+            <if test="eEndTime != null">e_end_time = #{eEndTime},</if>
+            <if test="eSchool != null">e_school = #{eSchool},</if>
+            <if test="ePost != null">e_post = #{ePost},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where edue_id = #{edueId}
+    </update>
+
+    <delete id="deletePortalUserEdueById" parameterType="Long">
+        delete from portal_user_edue where edue_id = #{edueId}
+    </delete>
+
+    <delete id="deletePortalUserEdueByIds" parameterType="String">
+        delete from portal_user_edue where edue_id in 
+        <foreach item="edueId" collection="array" open="(" separator="," close=")">
+            #{edueId}
+        </foreach>
+    </delete>
+
+</mapper>
