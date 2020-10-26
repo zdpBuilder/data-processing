@@ -23,7 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPortalUserEdueList" parameterType="PortalUserEdue" resultMap="PortalUserEdueResult">
         <include refid="selectPortalUserEdueVo"/>
-        <where>  
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
             <if test="eStartTime != null "> and e_start_time = #{eStartTime}</if>
             <if test="eEndTime != null "> and e_end_time = #{eEndTime}</if>
             <if test="eSchool != null  and eSchool != ''"> and e_school = #{eSchool}</if>
@@ -89,4 +90,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <delete id="deletePortalUserEdueByUserIds" parameterType="String">
+        delete from portal_user_edue where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
 </mapper>

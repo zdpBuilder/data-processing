@@ -1,25 +1,25 @@
 package com.ruoyi.web.controller.system;
 
-import java.util.List;
-
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.PortalUser;
+import com.ruoyi.system.domain.PortalUserEdue;
+import com.ruoyi.system.domain.PortalUserFamily;
+import com.ruoyi.system.service.IPortalUserEdueService;
+import com.ruoyi.system.service.IPortalUserFamilyService;
 import com.ruoyi.system.service.IPortalUserService;
+import com.ruoyi.system.vo.PortalUserVo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.system.domain.PortalUser;
+import org.springframework.web.bind.annotation.*;
 
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import java.util.List;
 
 /**
  * 用户信息Controller
@@ -35,6 +35,11 @@ public class PortalUserController extends BaseController
 
     @Autowired
     private IPortalUserService portalUserService;
+
+    @Autowired
+    private IPortalUserFamilyService iPortalUserFamilyService;
+    @Autowired
+    private IPortalUserEdueService iPortalUserEdueService;
 
     @RequiresPermissions("system:portalUser:view")
     @GetMapping()
@@ -86,8 +91,9 @@ public class PortalUserController extends BaseController
     @Log(title = "用户信息", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(PortalUser portalUser)
+    public AjaxResult addSave(PortalUserVo portalUser)
     {
+
         return toAjax(portalUserService.insertPortalUser(portalUser));
     }
 
@@ -98,7 +104,15 @@ public class PortalUserController extends BaseController
     public String edit(@PathVariable("userId") Long userId, ModelMap mmap)
     {
         PortalUser portalUser = portalUserService.selectPortalUserById(userId);
+        PortalUserEdue  portalUserEdue=new PortalUserEdue();
+        portalUserEdue.setUserId(userId);
+        List<PortalUserEdue> portalUserEdues = iPortalUserEdueService.selectPortalUserEdueList(portalUserEdue);
+        PortalUserFamily portalUserFamily=new PortalUserFamily();
+        portalUserFamily.setUserId(userId);
+        List<PortalUserFamily> portalUserFamilies = iPortalUserFamilyService.selectPortalUserFamilyList(portalUserFamily);
         mmap.put("portalUser", portalUser);
+        mmap.put("portalUserEdues",portalUserEdues);
+        mmap.put("portalUserFamilies",portalUserFamilies);
         return prefix + "/edit";
     }
 
@@ -109,7 +123,7 @@ public class PortalUserController extends BaseController
     @Log(title = "用户信息", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(PortalUser portalUser)
+    public AjaxResult editSave(PortalUserVo portalUser)
     {
         return toAjax(portalUserService.updatePortalUser(portalUser));
     }

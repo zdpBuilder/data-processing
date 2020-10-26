@@ -1,148 +1,458 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('新增用户信息')" />
     <th:block th:include="include :: datetimepicker-css" />
     <th:block th:include="include :: bootstrap-fileinput-css"/>
 </head>
-<body class="white-bg">
-    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-portalUser-add">
-<!--            <div class="form-group">    -->
-<!--                <label class="col-sm-3 control-label is-required">登录账号：</label>-->
-<!--                <div class="col-sm-8">-->
-<!--                    <input name="loginName" class="form-control" type="text" required>-->
-<!--                </div>-->
-<!--            </div>-->
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用户姓名：</label>
-                <div class="col-sm-8">
-                    <input name="userName" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用户邮箱：</label>
-                <div class="col-sm-8">
-                    <input name="email" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">手机号码：</label>
-                <div class="col-sm-8">
-                    <input name="phonenumber" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">用户性别：</label>
-                <div class="col-sm-8">
-                    <select name="sex" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">头像路径：</label>
-                <div class="col-sm-8">
-                    <input type="hidden" name="avatar">
-                    <div class="file-loading">
-                        <input class="form-control file-upload" id="avatar" name="file" type="file">
+<body class="gray-bg">
+<div class="main-content">
+    <form id="form-portalUser-add" class="form-horizontal">
+        <h4 class="form-header h4">用户信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">用户名称：</label>
+                    <div class="col-sm-8">
+                        <input name="userName" placeholder="请输入用户名称" class="form-control" type="text" maxlength="30">
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">密码：</label>
-                <div class="col-sm-8">
-                    <input name="password" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">盐加密：</label>
-                <div class="col-sm-8">
-                    <input name="salt" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">帐号状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('data_status')}">
-                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}">
-                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">用户性别：</label>
+                    <div class="col-sm-8">
+                        <select name="sex" class="form-control" th:with="type=${@dict.getType('sys_user_sex')}">
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">删除标志：</label>
-                <div class="col-sm-8">
-                    <input name="delFlag" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">备注：</label>
-                <div class="col-sm-8">
-                    <textarea name="remark" class="form-control"></textarea>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">政治面貌：</label>
-                <div class="col-sm-8">
-                    <select name="politicalOutlook" class="form-control m-b" th:with="type=${@dict.getType('political_outlook')}">
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">身份证号码：</label>
-                <div class="col-sm-8">
-                    <input name="idCard" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">生日：</label>
-                <div class="col-sm-8">
-                    <div class="input-group date">
-                        <input name="birthday" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">手机号码：</label>
+                    <div class="col-sm-8">
+                        <input id="phonenumber" name="phonenumber" placeholder="请输入手机号码" class="form-control" type="text" maxlength="11">
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">自我简介：</label>
-                <div class="col-sm-8">
-                    <textarea name="intro" class="form-control"></textarea>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">政治面貌：</label>
+                    <div class="col-sm-8">
+                        <select name="politicalOutlook" class="form-control m-b" th:with="type=${@dict.getType('political_outlook')}">
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
-    <th:block th:include="include :: footer" />
-    <th:block th:include="include :: datetimepicker-js" />
-    <th:block th:include="include :: bootstrap-fileinput-js"/>
-    <script th:inline="javascript">
-        var prefix = ctx + "system/portalUser"
-        $("#form-portalUser-add").validate({
-            focusCleanup: true
-        });
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">身份证号：</label>
+                    <div class="col-sm-8">
+                        <input id="idCard" name="idCard" placeholder="请输入身份证号" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">用户生日：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <input  name="birthday" type="hidden" >
+                            <input disabled   name="birthday" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        function submitHandler() {
-            if ($.validate.form()) {
-                $.operate.save(prefix + "/add", $('#form-portalUser-add').serialize());
-            }
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">用户邮箱：</label>
+                    <div class="col-sm-8">
+                        <input id="email" name="email" placeholder="请输入用户邮箱" class="form-control" type="text"  >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">用户状态：</label>
+                    <div class="col-sm-8">
+                        <div class="radio-box" th:each="dict : ${@dict.getType('data_status')}">
+                            <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                            <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">头像路径：</label>
+                    <div class="col-xs-10">
+                        <input type="hidden" name="avatar">
+                        <div class="file-loading">
+                            <input class="form-control file-upload" id="avatar" name="file" type="file">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">自我简介：</label>
+                    <div class="col-xs-10">
+                        <textarea name="remark" maxlength="500" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">家庭成员</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-white btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>
+                <button type="button" class="btn btn-white btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table"></table>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="form-header h4 ">教育经历</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-white btn-sm" onclick="addColumn2()"><i class="fa fa-plus"> 增加</i></button>
+                <button type="button" class="btn btn-white btn-sm" onclick="delColumn2()"><i class="fa fa-minus"> 删除</i></button>
+
+                <div  style="padding-top: 20px"  class="col-sm-12 select-table table-striped" id="education-table">
+
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!--<div class="row">-->
+<!--    <div class="col-sm-offset-5 col-sm-10">-->
+<!--        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;-->
+<!--        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>-->
+<!--    </div>-->
+<!--</div>-->
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<script th:src="@{/js/jquery.tmpl.js}"></script>
+<script th:inline="javascript">
+    var index = 0;
+    var htmlArry = [];
+    var prefix = ctx + "system/portalUser";
+    var icon = "<i class='fa fa-times-circle'></i> ";
+
+    //电话
+    $.validator.addMethod("isPhone", function(value, element) {
+        var length = value.length;
+        var mobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
+    }, "请填写正确的手机号码");
+
+    //电话
+    $.validator.addMethod("isPhone", function(value, element) {
+        var length = value.length;
+        var mobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/;
+        return this.optional(element) || (length == 11 && mobile.test(value));
+    }, "请填写正确的手机号码");
+    //身份证
+    $.validator.addMethod("isCard", function(value, element) {
+
+        var length = value.length;
+        var isCard = /^[1-9]{1}[0-9]{14}$|^[1-9]{1}[0-9]{16}([0-9]|[xX])$/;
+        var flag = this.optional(element) || (length == 18 && isCard.test(value));
+        if(flag){
+           var birthday = value.substring(6,10)+"-"+value.substring(10,12)+"-"+value.substring(12,14);
+            $("input[name='birthday']").val(birthday);
         }
+        return flag;
+    }, "请填写正确的身份证号码");
 
-        $("input[name='birthday']").datetimepicker({
+    $("#form-portalUser-add").validate({
+        focusCleanup: true,
+        rules: {
+            userName: {
+                required: true,
+                minlength: 2
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            phonenumber:{
+                required: true,
+                isPhone:true
+
+            },
+            idCard:{
+                required: true,
+                isCard:true
+            }
+        },
+        messages: {
+            username: {
+                required: icon + "请输入您的用户名",
+                minlength: icon + "用户名必须两个字符以上"
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-portalUser-add').serializeArray());
+        }
+    }
+
+
+    $(function() {
+        var options = {
+            pagination: false,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            sidePagination: "client",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                        return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'fRelationship',
+                    align: 'center',
+                    title: '与本人关系',
+                    formatter: function(value, row, index) {
+                        var data = [{ index: index, fRelationship: value }];
+                        return $("#portalUserFamilyFRTpl").tmpl(data).html();
+                    }
+                },
+                {
+                    field: 'fName',
+                    align: 'center',
+                    title: '姓名',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='portalUserFamily[%s].fName' value='%s'>", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'fPhone',
+                    align: 'center',
+                    title: '手机号',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='portalUserFamily[%s].fPhone' value='%s' >", index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'fWorkUnit',
+                    align: 'center',
+                    title: '工作单位',
+                    formatter: function(value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='portalUserFamily[%s].fWorkUnit' value='%s'>", index, value);
+                        return html;
+                    }
+                }
+                ]
+        };
+
+        $.table.init(options);
+
+        // var options2 = {
+        //     id:'bootstrap-table2',
+        //     pagination: false,
+        //     showSearch: false,
+        //     showRefresh: false,
+        //     showToggle: false,
+        //     showColumns: false,
+        //     sidePagination: "client",
+        //     columns: [{
+        //         checkbox: true
+        //     },
+        //         {
+        //             field: 'index',
+        //             align: 'center',
+        //             title: "序号",
+        //             formatter: function (value, row, index) {
+        //                 var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+        //                 return columnIndex + $.table.serialNumber(index);
+        //             }
+        //         },
+        //         {
+        //             field: 'name',
+        //             align: 'center',
+        //             title: '商品名称',
+        //             formatter: function(value, row, index) {
+        //                 var html = $.common.sprintf("<input class='form-control' type='text' name='goods[%s].name' value='%s'>", index, value);
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field: 'weight',
+        //             align: 'center',
+        //             title: '商品重量',
+        //             formatter: function(value, row, index) {
+        //                 var html = $.common.sprintf("<input class='form-control' type='text' name='goods[%s].weight' value='%s'>", index, value);
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field: 'date',
+        //             align: 'center',
+        //             title: '商品日期',
+        //             formatter: function(value, row, index) {
+        //                 var html = $.common.sprintf("<input class='form-control' type='text' name='goods[%s].date' value='%s' placeholder='yyyy-MM-dd'>", index, value);
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field: 'price',
+        //             align: 'center',
+        //             title: '商品价格',
+        //             formatter: function(value, row, index) {
+        //                 var html = $.common.sprintf("<input class='form-control' type='text' name='goods[%s].price' value='%s'>", index, value);
+        //                 return html;
+        //             }
+        //         },
+        //         {
+        //             field: 'type',
+        //             align: 'center',
+        //             title: '商品种类',
+        //             formatter: function(value, row, index) {
+        //                 var data = [{ index: index, type: value }];
+        //                 return $("#goodsTypeTpl").tmpl(data).html();
+        //             }
+        //         }]
+        // };
+        // $.table.init(options2);
+    });
+
+    /* 主子表-提交 */
+    // function submitHandler(index, layero){
+    //     var data = $("#form-add").serializeArray();
+    //     $.operate.saveModal("/demo/operate/customer/add", data);
+    // }
+
+    $("input[name='birthday']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+    function addColumn() {
+        var count = $("#" + table.options.id).bootstrapTable('getData').length;
+        sub.editColumn();
+
+        $("#" + table.options.id).bootstrapTable('insertRow', {
+            index: count,
+            row: {
+                index: $.table.serialNumber(count),
+                fRelationship: "",
+                fName: "",
+                fPhone: "",
+                fWorkUnit: "",
+            }
+        });
+    }
+
+    function addColumn2() {
+
+
+        var htmlitem = "<div id='row"+index+"' class='row' style='0 auto' >";
+        htmlitem+=" <label class='col-xs-1 control-label' >"+Number(index+1)+"</label>";
+        htmlitem+="<div class='col-xs-2 form-group' style='margin-right: 5px;'><input class='form-control date' type='text' name='portalUserEdue["+index+"].eStartTime'placeholder='开始时间'  value=''></div>";
+        htmlitem+="<div class='col-xs-2 form-group' style='margin-right: 5px;'><input class='form-control date' type='text' name='portalUserEdue["+index+"].eEndTime'placeholder='结束时间' value=''></div>";
+        htmlitem+="<div class='col-xs-4 form-group' style='margin-right: 5px;'><input class='form-control ' type='text' name='portalUserEdue["+index+"].eSchool'placeholder='学校名称' value=''></div>";
+        htmlitem+="<div class='col-xs-3 form-group' style='margin-right: 5px;'><input class='form-control' type='text' name='portalUserEdue["+index+"].ePost' placeholder='担任职务' value=''></div>";
+        htmlitem+="</div>"
+
+        htmlArry.push(htmlitem);
+        $("#education-table").append(htmlitem);
+        index++;
+        $(".date").datetimepicker({
             format: "yyyy-mm-dd",
             minView: "month",
-            autoclose: true
+            autoclose: true,
+            pickerPosition:'top-right'
         });
+    }
+    function delColumn2(){
+        $('#row'+index).remove();
+        if(index==0)
+            return;
+        htmlArry.pop(index);index--;
 
-        $(".file-upload").fileinput({
-            uploadUrl: '/common/upload',
-            maxFileCount: 1,
-            autoReplace: true
-        }).on('fileuploaded', function (event, data, previewId, index) {
-            $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
-        }).on('fileremoved', function (event, id, index) {
-            $("input[name='" + event.currentTarget.id + "']").val('')
-        })
-    </script>
+        // var html = "";
+        // for(var i = 0;i<htmlArry.length;i++){
+        //     html+=htmlArry[i]
+        //
+        // }
+        // $("#education-table").html(html);
+        //     $(".date").datetimepicker({
+        //         format: "yyyy-mm-dd",
+        //         minView: "month",
+        //         autoclose: true,
+        //         pickerPosition:'top-right'
+        //     });
+
+    }
+
+    //
+    // $("#bootstrap-table").on("post-body.bs.table", function (e, args) {
+    //     $("input[name$='date']").datetimepicker({
+    //         format: "yyyy-mm-dd",
+    //         minView: "month",
+    //         autoclose: true,
+    //         pickerPosition:'top-right'
+    //     });
+    // });
+
+    $(".file-upload").fileinput({
+        uploadUrl: '/common/upload',
+        maxFileCount: 1,
+        autoReplace: true
+    }).on('fileuploaded', function (event, data, previewId, index) {
+        $("input[name='" + event.currentTarget.id + "']").val(data.response.url)
+    }).on('fileremoved', function (event, id, index) {
+        $("input[name='" + event.currentTarget.id + "']").val('')
+    })
+</script>
 </body>
 </html>
+
+<!-- 商品类型 -->
+<script id="portalUserFamilyFRTpl" type="text/x-jquery-tmpl">
+<div>
+<select class='form-control' name='portalUserFamily[${index}].fRelationship'>
+    <option value="1" {{if fRelationship==="1"}}selected{{/if}}>父亲</option>
+    <option value="2" {{if fRelationship==="2"}}selected{{/if}}>母亲</option>
+    <option value="3" {{if fRelationship==="3"}}selected{{/if}}>爷爷</option>
+    <option value="4" {{if fRelationship==="4"}}selected{{/if}}>奶奶</option>
+    <option value="5" {{if fRelationship==="5"}}selected{{/if}}>兄弟</option>
+    <option value="6" {{if fRelationship==="6"}}selected{{/if}}>姐妹</option>
+</select>
+</div>
+</script>

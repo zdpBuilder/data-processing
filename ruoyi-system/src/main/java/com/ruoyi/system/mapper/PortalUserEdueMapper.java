@@ -1,7 +1,8 @@
 package com.ruoyi.system.mapper;
 
-import java.util.List;
 import com.ruoyi.system.domain.PortalUserEdue;
+
+import java.util.List;
 
 /**
  * 教育经历列Mapper接口
@@ -58,4 +59,11 @@ public interface PortalUserEdueMapper
      * @return 结果
      */
     public int deletePortalUserEdueByIds(String[] edueIds);
+
+    /**
+     * 根据userId 批量删除教育经历
+     * @param userIds
+     * @return
+     */
+    public int deletePortalUserEdueByUserIds(String[] userIds);
 }

@@ -1,7 +1,8 @@
 package com.ruoyi.system.mapper;
 
-import java.util.List;
 import com.ruoyi.system.domain.PortalUserFamily;
+
+import java.util.List;
 
 /**
  * 家庭成员列Mapper接口
@@ -58,4 +59,11 @@ public interface PortalUserFamilyMapper
      * @return 结果
      */
     public int deletePortalUserFamilyByIds(String[] familyIds);
+
+    /**
+     * 根据用户ID删除家庭成员列表
+     * @param userIds 要删除的数据ID
+     * @return
+     */
+    public int deletePortalUserFamilyByUserIds(String[] userIds);
 }

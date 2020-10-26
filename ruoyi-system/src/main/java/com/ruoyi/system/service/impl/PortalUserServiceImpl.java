@@ -1,13 +1,22 @@
 package com.ruoyi.system.service.impl;
 
-import java.util.List;
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.PortalUser;
+import com.ruoyi.system.domain.PortalUserEdue;
+import com.ruoyi.system.domain.PortalUserFamily;
+import com.ruoyi.system.mapper.PortalUserEdueMapper;
+import com.ruoyi.system.mapper.PortalUserFamilyMapper;
+import com.ruoyi.system.mapper.PortalUserMapper;
+import com.ruoyi.system.service.IPortalUserEdueService;
+import com.ruoyi.system.service.IPortalUserFamilyService;
+import com.ruoyi.system.service.IPortalUserService;
+import com.ruoyi.system.vo.PortalUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.system.mapper.PortalUserMapper;
-import com.ruoyi.system.domain.PortalUser;
-import com.ruoyi.system.service.IPortalUserService;
-import com.ruoyi.common.core.text.Convert;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 用户信息Service业务层处理
@@ -20,6 +29,14 @@ public class PortalUserServiceImpl implements IPortalUserService
 {
     @Autowired
     private PortalUserMapper portalUserMapper;
+    @Autowired
+    private IPortalUserFamilyService iPortalUserFamilyService;
+    @Autowired
+    private IPortalUserEdueService iPortalUserEdueService;
+    @Autowired
+    private PortalUserEdueMapper portalUserEdueMapper;
+    @Autowired
+    private PortalUserFamilyMapper protalUserFamilyMapper;
 
     /**
      * 查询用户信息
@@ -51,11 +68,33 @@ public class PortalUserServiceImpl implements IPortalUserService
      * @param portalUser 用户信息
      * @return 结果
      */
+    @Transactional
     @Override
-    public int insertPortalUser(PortalUser portalUser)
+    public int insertPortalUser(PortalUserVo portalUser)
     {
+        int result = 0;
         portalUser.setCreateTime(DateUtils.getNowDate());
-        return portalUserMapper.insertPortalUser(portalUser);
+        //插入用户信息
+        result += portalUserMapper.insertPortalUser(portalUser);
+
+        //插入家庭成员
+        if(portalUser.getPortalUserFamily()!=null && portalUser.getPortalUserFamily().size()>0){
+            for (PortalUserFamily portalUserFamily: portalUser.getPortalUserFamily()
+                 ) {
+                portalUserFamily.setUserId(portalUser.getUserId());
+                result +=  iPortalUserFamilyService.insertPortalUserFamily(portalUserFamily);
+            }
+        }
+        //插入经历
+        if(portalUser.getPortalUserEdue()!=null && portalUser.getPortalUserEdue().size()>0){
+            for (PortalUserEdue portalUserEdue: portalUser.getPortalUserEdue()
+            ) {
+                portalUserEdue.setUserId(portalUser.getUserId());
+                result += iPortalUserEdueService.insertPortalUserEdue(portalUserEdue);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -64,11 +103,36 @@ public class PortalUserServiceImpl implements IPortalUserService
      * @param portalUser 用户信息
      * @return 结果
      */
+    @Transactional
     @Override
-    public int updatePortalUser(PortalUser portalUser)
+    public int updatePortalUser(PortalUserVo portalUser)
     {
+        int result = 0;
+        //更新主表
         portalUser.setUpdateTime(DateUtils.getNowDate());
-        return portalUserMapper.updatePortalUser(portalUser);
+        result+=portalUserMapper.updatePortalUser(portalUser);
+        //删除子表
+        portalUserEdueMapper.deletePortalUserEdueByUserIds(Convert.toStrArray(String.valueOf(portalUser.getUserId())));
+        protalUserFamilyMapper.deletePortalUserFamilyByUserIds(Convert.toStrArray(String.valueOf(portalUser.getUserId())));
+        //插入子表
+        //插入家庭成员
+        if(portalUser.getPortalUserFamily()!=null && portalUser.getPortalUserFamily().size()>0){
+            for (PortalUserFamily portalUserFamily: portalUser.getPortalUserFamily()
+            ) {
+                portalUserFamily.setUserId(portalUser.getUserId());
+                result +=  iPortalUserFamilyService.insertPortalUserFamily(portalUserFamily);
+            }
+        }
+        //插入经历
+        if(portalUser.getPortalUserEdue()!=null && portalUser.getPortalUserEdue().size()>0){
+            for (PortalUserEdue portalUserEdue: portalUser.getPortalUserEdue()
+            ) {
+                portalUserEdue.setUserId(portalUser.getUserId());
+                result += iPortalUserEdueService.insertPortalUserEdue(portalUserEdue);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -77,9 +141,16 @@ public class PortalUserServiceImpl implements IPortalUserService
      * @param ids 需要删除的数据ID
      * @return 结果
      */
+    @Transactional
     @Override
     public int deletePortalUserByIds(String ids)
     {
+
+        String[] idsArry = Convert.toStrArray(ids);
+        //删除子表
+        portalUserEdueMapper.deletePortalUserEdueByUserIds(Convert.toStrArray(ids));
+        protalUserFamilyMapper.deletePortalUserFamilyByUserIds(Convert.toStrArray(ids));
+
         return portalUserMapper.deletePortalUserByIds(Convert.toStrArray(ids));
     }
 

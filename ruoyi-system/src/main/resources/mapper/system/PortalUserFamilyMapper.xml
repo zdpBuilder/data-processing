@@ -90,4 +90,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <delete id="deletePortalUserFamilyByUserIds" parameterType="String">
+        delete from portal_user_family where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
 </mapper>
